@@ -376,7 +376,7 @@ void WriteH5::writeData(const std::vector<std::vector<T> > &data)
          dsp.close();
          file.close();
          delete[] md;
-         delete a;
+         delete[] a;
          break;
       }
       // Here we are catching if the file does not exist. We will then create a new file and return
@@ -424,11 +424,11 @@ void WriteH5::createGroup(std::string groupName)
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
    }
 }
 
@@ -452,13 +452,13 @@ int LoadH5::getSize() const
     }
     catch (FileIException error)
     {
-       error.printError();
+       error.printErrorStack();
        int err = -1;
        return err;
     }
     catch (GroupIException error)
     {
-       error.printError();
+       error.printErrorStack();
        int err = -1;
        return err;
     }
@@ -515,13 +515,13 @@ int LoadH5::getDataint() const
    }
     catch (FileIException error)
     {
-       error.printError();
+       error.printErrorStack();
        int err = -1;
        return err;
     }
     catch (GroupIException error)
     {
-       error.printError();
+       error.printErrorStack();
        int err = -1;
        return err;
     }
@@ -549,7 +549,7 @@ float LoadH5::getDatafloat() const
       size_t size = ftype.getSize();
       float *data = new float;
       if ( order == 0 && size == 4 )
-         dataset.read(data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read(data, PredType::IEEE_F32LE); // Our standard float
       else if ( order == 0 && size == 8 ) 
       {
          dataset.read((float*)data, PredType::IEEE_F64LE);
@@ -574,13 +574,13 @@ float LoadH5::getDatafloat() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       float err = -1.;
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       float err = -1.;
       return err;
    }
@@ -609,7 +609,7 @@ double LoadH5::getDatadouble() const
       if ( order==0 && size == 4 )
       {
          std::cout << "NOTE: This is actually float data. We are casting to double" << std:: endl;
-         dataset.read((double*)data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read((double*)data, PredType::IEEE_F32LE); // Our standard float
       }
       else if ( order == 0 && size == 8 ) 
          dataset.read(data, PredType::IEEE_F64LE);
@@ -632,13 +632,13 @@ double LoadH5::getDatadouble() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       double err = -1.;
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       double err = -1.;
       return err;
    }
@@ -697,13 +697,13 @@ std::vector<int> LoadH5::getDataVint() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<int> err{1,-1};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<int> err{1,-1};
       return err;
    }
@@ -734,7 +734,7 @@ std::vector<float> LoadH5::getDataVfloat() const
       size_t size = ftype.getSize();
       float *data = new float[npts];
       if ( order == 0 && size == 4 )
-         dataset.read(data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read(data, PredType::IEEE_F32LE); // Our standard float
       else if ( order == 0 && size == 8 ) 
       {
          dataset.read((float*)data, PredType::IEEE_F64LE);
@@ -759,13 +759,13 @@ std::vector<float> LoadH5::getDataVfloat() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<float> err{1,-1.};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<float> err{1,-1.};
       return err;
    }
@@ -797,7 +797,7 @@ std::vector<double> LoadH5::getDataVDouble() const
       if ( order==0 && size == 4 )
       {
          std::cout << "NOTE: This is actually float data. We are casting to double" << std:: endl;
-         dataset.read((double*)data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read((double*)data, PredType::IEEE_F32LE); // Our standard float
       }
       else if ( order == 0 && size == 8 ) 
          dataset.read(data, PredType::IEEE_F64LE);
@@ -820,13 +820,13 @@ std::vector<double> LoadH5::getDataVDouble() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<double> err{1,-1.};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<double> err{1,-1.};
       return err;
    }
@@ -885,7 +885,7 @@ std::vector<std::vector<int> > LoadH5::getData2Dint() const
          for ( size_t j = 0; j < dim2; ++j )
             v[i][j] = md[i][j];
       delete[] md;
-      delete data;
+      delete[] data;
       dataspace.close();
       datatype.close();
       dataset.close();
@@ -894,13 +894,13 @@ std::vector<std::vector<int> > LoadH5::getData2Dint() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<int> > err{1,std::vector<int>(1,-1)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<int> > err{1,std::vector<int>(1,-1)};
       return err;
    }
@@ -931,7 +931,7 @@ std::vector<std::vector<float> > LoadH5::getData2Dfloat() const
       for ( size_t i = 0; i < dim1; ++i )
          md[i] = data + i*dim2;
       if ( order==0 && size == 4 )
-         dataset.read(data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read(data, PredType::IEEE_F32LE); // Our standard float
       else if ( order == 0 && size == 8 ) 
          dataset.read(data, PredType::IEEE_F64LE);
       else if ( order == 1  && size == 4 )
@@ -946,7 +946,7 @@ std::vector<std::vector<float> > LoadH5::getData2Dfloat() const
          for ( size_t j = 0; j < dim2; ++j )
             v[i][j] = md[i][j];
       delete[] md;
-      delete data;
+      delete[] data;
       dataspace.close();
       datatype.close();
       dataset.close();
@@ -955,13 +955,13 @@ std::vector<std::vector<float> > LoadH5::getData2Dfloat() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<float> > err{1,std::vector<float>(1,-1.)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<float> > err{1,std::vector<float>(1,-1.)};
       return err;
    }
@@ -993,7 +993,7 @@ std::vector<std::vector<double> > LoadH5::getData2Ddouble() const
       for ( size_t i = 0; i < dim1; ++i )
          md[i] = data + i*dim2;
       if ( order==0 && size == 4 )
-         dataset.read(data, PredType::IEEE_F32LE); // Our standard integer
+         dataset.read(data, PredType::IEEE_F32LE); // Our standard float
       else if ( order == 0 && size == 8 ) 
          dataset.read(data, PredType::IEEE_F64LE);
       else if ( order == 1 && size == 4 )
@@ -1008,7 +1008,7 @@ std::vector<std::vector<double> > LoadH5::getData2Ddouble() const
          for ( size_t j = 0; j < dim2; ++j )
             v[i][j] = md[i][j];
       delete[] md;
-      delete data;
+      delete[] data;
       dataspace.close();
       datatype.close();
       dataset.close();
@@ -1017,13 +1017,13 @@ std::vector<std::vector<double> > LoadH5::getData2Ddouble() const
    }
    catch (FileIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<double> > err{1,std::vector<double>(1,-1.)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printError();
+      error.printErrorStack();
       std::vector<std::vector<double> > err{1,std::vector<double>(1,-1.)};
       return err;
    }
