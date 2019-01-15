@@ -41,6 +41,7 @@
 #include <typeinfo>
 
 #include "H5Cpp.h"
+#include "Util.hpp"
 
 using namespace H5;
 
@@ -189,7 +190,7 @@ void WriteH5::writeData(const T &data)
             else
             {
                 std::cout << "Unknown data type! EXITING" << std::endl;
-                exit(1);
+                Util::exit(1);
             }
             dsp.close();
             file.close();
@@ -271,7 +272,7 @@ void WriteH5::writeData(const std::vector<T> &data)
          else
          {
             std::cout << "Unknown data type! EXITING" << std::endl;
-            exit(1);
+            Util::exit(1);
          }
 
          // remember to close everything and delete our arrays
@@ -369,7 +370,7 @@ void WriteH5::writeData(const std::vector<std::vector<T> > &data)
          else
          {
             std::cout << "Unknown data type! EXITING" << std::endl;
-            exit(1);
+            Util::exit(1);
          }
 
          // remember to close everything and delete our arrays
@@ -478,7 +479,7 @@ int LoadH5::getDataint() const
         if ( classt != 0 )
         {
             std::cout << LoadH5::variable << " is not an int... you can't save this as an int." << std::endl;
-            exit(1);
+            Util::exit(1);
         }
         int *data = new int;
         IntType itype = dataset.getIntType();
@@ -541,7 +542,7 @@ float LoadH5::getDatafloat() const
       if ( classt != 1 )
       {
          std::cout << LoadH5::variable << " is not a float... you can't save this as a float." << std::endl;
-         exit(1);
+         Util::exit(1);
       }
       FloatType ftype = dataset.getFloatType();
       H5std_string order_string;
@@ -599,7 +600,7 @@ double LoadH5::getDatadouble() const
       if ( classt != 1 )
       {
          std::cout << LoadH5::variable << " is not a float... you can't save this as a float." << std::endl;
-         exit(1);
+         Util::exit(1);
       }
       FloatType ftype = dataset.getFloatType();
       H5std_string order_string;
@@ -661,7 +662,7 @@ std::vector<int> LoadH5::getDataVint() const
       if ( classt != 0 )
       {
          std::cout << LoadH5::variable << " is not an int... you can't save this as an int." << std::endl;
-         exit(1);
+         Util::exit(1);
       }
       int *data = new int[npts]; // allocate at run time what the size will be
       IntType itype = dataset.getIntType();
@@ -726,7 +727,7 @@ std::vector<float> LoadH5::getDataVfloat() const
       if ( classt != 1 )
       {
          std::cout << LoadH5::variable << " is not a float... you can't save this as a float." << std::endl;
-         exit(1);
+         Util::exit(1);
       }
       FloatType ftype = dataset.getFloatType();
       H5std_string order_string;
@@ -787,7 +788,7 @@ std::vector<double> LoadH5::getDataVDouble() const
       if ( classt != 1 )
       {
          std::cout << LoadH5::variable << " is not a float... you can't save this as a float." << std::endl;
-         exit(1);
+         Util::exit(1);
       }
       FloatType ftype = dataset.getFloatType();
       H5std_string order_string;
@@ -992,13 +993,13 @@ std::vector<std::vector<double> > LoadH5::getData2Ddouble() const
       auto md   = new double*[dim1];
       for ( size_t i = 0; i < dim1; ++i )
          md[i] = data + i*dim2;
-      if ( order==0 && size == 4 )
+      if ( order == 0 && size == 4 )
          dataset.read(data, PredType::IEEE_F32LE); // Our standard float
       else if ( order == 0 && size == 8 ) 
          dataset.read(data, PredType::IEEE_F64LE);
       else if ( order == 1 && size == 4 )
          dataset.read(data, PredType::IEEE_F32BE);
-      else if ( order ==1 && size == 8 )
+      else if ( order == 1 && size == 8 )
          dataset.read(data, PredType::IEEE_F64BE);
       else 
          std::cout << "Did not find data type" << std::endl;
