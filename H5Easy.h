@@ -45,6 +45,43 @@
 
 using namespace H5;
 
+
+// based on code in hdf5/test/err_compat.c
+/*-------------------------------------------------------------------------
+ * Function:    custom_print_cb2
+ *
+ * Purpose:     Callback function to print error stack in customized way
+ *              for H5Ewalk1.
+ *
+ * Return:      Success:        0
+ *
+ *              Failure:        -1
+ *
+ * Programmer:  Raymond Lu
+ *              4 October 2010
+ *
+ * Modifications:
+ *
+ *-------------------------------------------------------------------------
+ */
+herr_t
+custom_print_cb2(int n, H5E_error2_t *err_desc, void * detail)
+{
+    const char * desc = "";
+
+    if (err_desc->desc)
+        desc = err_desc->desc;
+
+    Error << boost::format("HDF5 #%03d: %s in %s(): line %u: %s")
+             % n
+             % err_desc->file_name
+             % err_desc->func_name
+             % err_desc->line
+             % desc;
+
+    return 0;
+}
+
 class WriteH5
 {
    private:
@@ -425,11 +462,11 @@ void WriteH5::createGroup(std::string groupName)
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
    }
 }
 
@@ -453,13 +490,13 @@ int LoadH5::getSize() const
     }
     catch (FileIException error)
     {
-       error.printErrorStack();
+        error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
        int err = -1;
        return err;
     }
     catch (GroupIException error)
     {
-       error.printErrorStack();
+        error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
        int err = -1;
        return err;
     }
@@ -493,7 +530,7 @@ int LoadH5::getDataint() const
            dataset.read(data, PredType::STD_I16LE); // Our standard integer
         else if ( order== 0 && size == 4 )
            dataset.read(data, PredType::STD_I32LE); // Our standard integer
-        else if ( order== 0 && size == 8 ) 
+        else if ( order== 0 && size == 8 )
            dataset.read(data, PredType::STD_I64LE);
         else if ( order== 1 && size == 1 )
            dataset.read(data, PredType::STD_I8BE); // Our standard integer
@@ -503,7 +540,7 @@ int LoadH5::getDataint() const
            dataset.read(data, PredType::STD_I32BE);
         else if ( order== 1 && size == 8 )
            dataset.read(data, PredType::STD_I64BE);
-        else 
+        else
            std::cout << "Did not find data type" << std::endl;
         // Manage our memory properly
         int v = *data;
@@ -516,13 +553,13 @@ int LoadH5::getDataint() const
    }
     catch (FileIException error)
     {
-       error.printErrorStack();
+        error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
        int err = -1;
        return err;
     }
     catch (GroupIException error)
     {
-       error.printErrorStack();
+        error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
        int err = -1;
        return err;
     }
@@ -575,13 +612,13 @@ float LoadH5::getDatafloat() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       float err = -1.;
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       float err = -1.;
       return err;
    }
@@ -633,13 +670,13 @@ double LoadH5::getDatadouble() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       double err = -1.;
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       double err = -1.;
       return err;
    }
@@ -698,13 +735,13 @@ std::vector<int> LoadH5::getDataVint() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<int> err{1,-1};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<int> err{1,-1};
       return err;
    }
@@ -760,13 +797,13 @@ std::vector<float> LoadH5::getDataVfloat() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<float> err{1,-1.};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<float> err{1,-1.};
       return err;
    }
@@ -821,13 +858,13 @@ std::vector<double> LoadH5::getDataVDouble() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<double> err{1,-1.};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+       error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<double> err{1,-1.};
       return err;
    }
@@ -895,13 +932,13 @@ std::vector<std::vector<int> > LoadH5::getData2Dint() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<int> > err{1,std::vector<int>(1,-1)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<int> > err{1,std::vector<int>(1,-1)};
       return err;
    }
@@ -956,13 +993,13 @@ std::vector<std::vector<float> > LoadH5::getData2Dfloat() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<float> > err{1,std::vector<float>(1,-1.)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<float> > err{1,std::vector<float>(1,-1.)};
       return err;
    }
@@ -1018,13 +1055,13 @@ std::vector<std::vector<double> > LoadH5::getData2Ddouble() const
    }
    catch (FileIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<double> > err{1,std::vector<double>(1,-1.)};
       return err;
    }
    catch (GroupIException error)
    {
-      error.printErrorStack();
+      error.walkErrorStack(H5E_WALK_UPWARD, (H5E_walk2_t)custom_print_cb2, nullptr);
       std::vector<std::vector<double> > err{1,std::vector<double>(1,-1.)};
       return err;
    }
